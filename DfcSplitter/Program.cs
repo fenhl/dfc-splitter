@@ -78,12 +78,13 @@ namespace DfcSplitter
                     DayCard = card,
                     NightCard = allCards.SingleOrDefault(nightCard => nightCard.Name == card.Related)
                 })
+                .Where(pair => pair.NightCard != null)
                 .Select(pair => new
                 {
                     Day = pair.DayCard.Name,
                     DayArt = pair.DayCard.Set.PicUrl,
                     Night = pair.NightCard?.Name,
-                    NightArt = pair.NightCard != null ? pair.NightCard.Set.PicUrl : null
+                    NightArt = pair.NightCard.Set.PicUrl
                 }).ToList();
                 sr.Close();
 
