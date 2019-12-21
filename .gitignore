@@ -49,3 +49,10 @@ Temporary Items
 *.user
 /DfcSplitter/bin/Debug
 /DfcSplitter/obj/Debug
+
+# VS stuff
+/.vs/
+/DfcSplitter/DfcSplitter_TemporaryKey.pfx
+/DfcSplitter/bin/
+/DfcSplitter/obj/
+/DfcSplitter/publish/

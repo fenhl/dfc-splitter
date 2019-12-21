@@ -50,25 +50,14 @@ namespace DfcSplitter
 
     public class Program
     {
-        public static string GetFileNameByCardNameWithoutSpecialChars(string cardName)
-        {
-            var regex = new Regex(@"[^A-Za-z0-9-. ]");
-            var replace = regex.Replace(cardName.Trim(), "");  
-            return "/" + replace + ".jpg";
-        }
-
-        public static string GetFileNameByCardName(string cardName)
-        {
-
-            return "/" + cardName.Replace('’', '\'') + ".jpg";
-        }
-
         public static void Main(string[] args)
         {
             try
             {
-                var cockatriceFileName = args[0];
-                var basePath = Path.GetDirectoryName(cockatriceFileName);
+                var basePath = Directory.GetCurrentDirectory();
+                var setCode = args[0];
+                var cockatriceFileName = $"{basePath}\\{setCode}.xml";
+                var imgsPath = $"{basePath}\\{setCode}-files";
 
                 var fullXml = File.ReadAllText(cockatriceFileName);
 
@@ -92,16 +81,10 @@ namespace DfcSplitter
                 .Select(pair => new
                 {
                     Day = pair.DayCard.Name,
-                    DayArt = GetFileNameByCardNameWithoutSpecialChars(pair.DayCard.Name),
+                    DayArt = pair.DayCard.Set.PicUrl,
                     Night = pair.NightCard?.Name,
-                    NightArt = pair.NightCard != null ? GetFileNameByCardName(pair.NightCard.Name) : null
+                    NightArt = pair.NightCard != null ? pair.NightCard.Set.PicUrl : null
                 }).ToList();
-                
-                /*var imagePairs =
-                    (from card in allCards
-                    join relatedCard in allCards on card.Related equals relatedCard.Name
-                    select new { Day = card.Name, DayArt = card.Set.PicUrl, Night = relatedCard.Name, NightArt = GetFileNameByCardName(relatedCard.Name) }).ToArray();
-*/
                 sr.Close();
 
                 Console.WriteLine($"Found {imagePairs.Count} cards");
@@ -113,62 +96,37 @@ namespace DfcSplitter
                 {
                     Console.WriteLine($"Processing {imagePair.Day} // {imagePair.Night}");
                     
-                    var newDayArt = GetFileNameByCardName(imagePair.Day);
+                    var dayFileName = imgsPath + imagePair.DayArt;
+                    var nightFileName = imgsPath + imagePair.NightArt;
 
-                    var dayFileName = basePath + imagePair.DayArt;
-                    var newDayFileName = basePath + newDayArt;
-                    var nightFileName = basePath + imagePair.NightArt;
-                    
-                    Bitmap sourceImage = Image.FromFile(dayFileName) as Bitmap;
-
-                    // Do not rewrite the images if they have already been rewritten
-                    if (imagePair.Night != null && sourceImage.Width == 752)
+                    using (Bitmap sourceImage = Image.FromFile(dayFileName) as Bitmap)
                     {
-                        Bitmap dayImage = new Bitmap(dayRect.Width, dayRect.Height);
-                        Bitmap nightImage = new Bitmap(dayRect.Width, dayRect.Height);
 
-                        using (Graphics g = Graphics.FromImage(dayImage))
+                        // Do not rewrite the images if they have already been rewritten
+                        if (imagePair.Night != null && sourceImage.Width == 752)
                         {
-                            g.DrawImage(sourceImage, dayRect, dayRect, GraphicsUnit.Pixel);
+                            Bitmap dayImage = new Bitmap(dayRect.Width, dayRect.Height);
+                            Bitmap nightImage = new Bitmap(dayRect.Width, dayRect.Height);
+
+                            using (Graphics g = Graphics.FromImage(dayImage))
+                            {
+                                g.DrawImage(sourceImage, dayRect, dayRect, GraphicsUnit.Pixel);
+                            }
+
+                            using (Graphics g = Graphics.FromImage(nightImage))
+                            {
+                                g.DrawImage(sourceImage, dayRect, nightRect, GraphicsUnit.Pixel);
+                            }
+
+                            sourceImage.Dispose();
+
+                            dayImage.Save(dayFileName);
+                            nightImage.Save(nightFileName);
                         }
-
-                        using (Graphics g = Graphics.FromImage(nightImage))
-                        {
-                            g.DrawImage(sourceImage, dayRect, nightRect, GraphicsUnit.Pixel);
-                        }
-
-                        sourceImage.Dispose();
-
-                        File.Delete(dayFileName);
-                        dayImage.Save(newDayFileName);
-                        nightImage.Save(nightFileName);
                     }
-                    else if(dayFileName != newDayFileName)
-                    {
-                        sourceImage.Dispose();
-                        File.Move(dayFileName, newDayFileName);
-                    }
-
-                    /*fullXml = fullXml.Replace(
-                        $"<name>{imagePair.Day}</name>\r\n <set picURL=\"{imagePair.DayArt}\"",
-                        $"<name>{imagePair.Day}</name>\r\n <set");
-
-                    fullXml = fullXml.Replace(
-                        $"<name>{imagePair.Night}</name>\r\n <set picURL=\"{imagePair.DayArt}\"",
-                        $"<name>{imagePair.Night}</name>\r\n <set");*/
                 }
 
-                fullXml = Regex.Replace(fullXml, $" <set[^>]*>", "<set>");
-
-                fullXml = fullXml.Replace('’', '\'');
-
-                Console.WriteLine("Writing modified XML");
-
-                File.WriteAllText(cockatriceFileName, fullXml);
-
                 Console.WriteLine("Done!");
-                Console.WriteLine("Press any key to continue.");
-                Console.ReadKey();
             }
             catch (Exception e) when (!Debugger.IsAttached)
             {
