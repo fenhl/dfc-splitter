@@ -1,12 +1,26 @@
-This tool does some postprocessing on set files exported from MSE. Namely, it normalizes apostrophes, fixes card images so that even cards with special characters work in MSE and also splits DFC images into two individual images (as Cockatrice necessitates).
+This tool splits double-faced cards exported from [Magic Set Editor](https://magicseteditor.boards.net/) using the Custom Standard Cockatrice exporter, which you can find pinned in [#format-design](https://discord.gg/gKJhAb6) in the Custom Standard Discord server.
 
-# How to make a MSE set work in Cockatrice
+# Usage
 
-1) Create a new empty folder.
-2) In MSE, File->Export->All card images. Use "{card.name}.jpg" as format. Click OK. Choose the folder you created in step 1.
-3) In MSE, File->Export->HTML, choose Cockatrice. Enter your set code, leave Images location empty. OK. Choose the folder you created in step 1.
-4) [Download the DFC splitter tool archive](https://github.com/mzabsky/dfc-splitter/releases/download/v1.0/DfcSplitter.1.0.zip) with the Windows binary and extract it somehwere.
-5) Run DfcSplitter.exe, give it full path to the set file you exported in step 2 as a command line argument. Note that it works by changing all the image files and the XML file in-place. If something goes wrong or you need to repeat the process for any reason, you need to delete all files in the folder and repeat steps 2 and 3.
-6) Copy all the images to %AppData%/../Local/Cockatrice/Cockatrice/pics/downloadedPics/{your set code}
-7) Copy the XML file to %AppData%/../Local/Cockatrice/Cockatrice/customsets
-8) Open Cockatrice. You should be able to find your cards now.
+1. In MSE, open the File menu and select Export → HTML.
+2. Choose the exporter “Cockatrice / Custom Standard 1.03.FH1”. (If you can't see the exporters' subtitles, you can check the version by looking at the first export option.)
+3. The recommended options are:
+    * “Custom” as the Cockatrice Set Type.
+    * JPG images.
+    * Disable “Tokens In Separate XML” and “Append Set Code To Tokens”.
+    * Export all rarities etc.
+4. Select where to save your export, and enter the set code as the file name.
+5. If the set doesn't have any double-faced cards, skip to step 13.
+6. In File Explorer, find the `DfcSplitter.exe` downloaded from <https://github.com/fenhl/dfc-splitter/releases/latest>, hold shift, right-click it, and select “Copy as path”.
+7. In File Explorer, navigate to the folder where the exported XML file and images folder are located.
+8. Hold shift and right-click the File Explorer window, and select “Open PowerShell window here”.
+9. Right-click the PowerShell window to paste the full path to the DFC splitter.
+10. Remove the `"` both at the start and at the end.
+11. At the end, add a space, followed by the set code.
+12. Hit return. You can close PowerShell after it says “done!”
+13. If you want to send the file to others, do that now, and tell your players the following steps.
+14. In Cockatrice, open the Card Database menu and select Open custom image folder.
+15. Move the folder with the images into the custom image folder.
+16. In Cockatrice, open the Card Database menu and select Open custom sets folder.
+17. Move the XML file into the custom sets folder.
+18. Restart Cockatrice.
