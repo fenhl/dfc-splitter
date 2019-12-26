@@ -88,7 +88,7 @@ namespace DfcSplitter
                 }).ToList();
                 sr.Close();
 
-                Console.WriteLine($"Found {imagePairs.Count} cards");
+                Console.WriteLine($"Found {imagePairs.Count} double-faced cards");
 
                 var dayRect = new Rectangle(0, 0, 375, 523);
                 var nightRect = new Rectangle(752 - 375, 0, 375, 523);
