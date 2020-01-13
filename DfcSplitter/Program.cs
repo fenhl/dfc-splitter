@@ -56,8 +56,8 @@ namespace DfcSplitter
             {
                 var basePath = Directory.GetCurrentDirectory();
                 var setCode = args[0];
-                var cockatriceFileName = $"{basePath}\\{setCode}.xml";
-                var imgsPath = $"{basePath}\\{setCode}-files";
+                var imgsPath = Path.Combine(basePath, $"{setCode}-files");
+                var cockatriceFileName = Path.Combine(imgsPath, $"{setCode}.xml");
 
                 var fullXml = File.ReadAllText(cockatriceFileName);
 
@@ -99,6 +99,12 @@ namespace DfcSplitter
                     
                     var dayFileName = imgsPath + imagePair.DayArt;
                     var nightFileName = imgsPath + imagePair.NightArt;
+
+                    if (!File.Exists(dayFileName))
+                    {
+                        Console.WriteLine($"error: {dayFileName} does not exist");
+                        return;
+                    }
 
                     using (Bitmap sourceImage = Image.FromFile(dayFileName) as Bitmap)
                     {

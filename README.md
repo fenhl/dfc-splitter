@@ -3,7 +3,7 @@ This tool splits double-faced cards exported from [Magic Set Editor](https://mag
 # Usage
 
 1. In MSE, open the File menu and select Export → HTML.
-2. Choose the exporter “Cockatrice / Custom Standard 1.03.FH1”. (If you can't see the exporters' subtitles, you can check the version by looking at the first export option.)
+2. Choose the exporter “Cockatrice / Custom Standard 1.03.FH6”. (If you can't see the exporters' subtitles, you can check the version by looking at the first export option.)
 3. The recommended options are:
     * “Custom” as the Cockatrice Set Type.
     * JPG images.
