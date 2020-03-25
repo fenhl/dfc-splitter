@@ -3,8 +3,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace DfcSplitter
@@ -54,10 +52,55 @@ namespace DfcSplitter
         {
             try
             {
-                var basePath = Directory.GetCurrentDirectory();
-                var setCode = args[0];
-                var imgsPath = Path.Combine(basePath, $"{setCode}-files");
-                var cockatriceFileName = Path.Combine(imgsPath, $"{setCode}.xml");
+                String basePath;
+                String imgsPath;
+                String cockatriceFileName;
+                if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[0])))
+                {
+                    // called with export root dir or images dir
+                    imgsPath = Path.Combine(Directory.GetCurrentDirectory(), args[0]);
+                    if (!Path.GetFileName(imgsPath).EndsWith("-files"))
+                    {
+                        imgsPath = Directory.GetFiles(imgsPath, "*-files")[0];
+                    }
+                    var setCode = Path.GetFileName(imgsPath);
+                    setCode = setCode.Substring(0, setCode.Length - 6);
+                    cockatriceFileName = Path.Combine(imgsPath, $"{setCode}.xml");
+                    if (!File.Exists(cockatriceFileName))
+                    {
+                        cockatriceFileName = Path.Combine(Directory.GetParent(imgsPath).ToString(), $"{setCode}.xml");
+                    }
+                }
+                else if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[0])))
+                {
+                    // called with export XML (handles both of Lore Seeker exporter's XML files as well as the Custom Standard exporter's XML file)
+                    cockatriceFileName = Path.Combine(Directory.GetCurrentDirectory(), args[0]);
+                    var setCode = Path.GetFileNameWithoutExtension(cockatriceFileName);
+                    imgsPath = Path.Combine(Directory.GetParent(cockatriceFileName).ToString(), $"{setCode}-files");
+                    if (!Directory.Exists(imgsPath))
+                    {
+                        // called with Lore Seeker bundled-images export XML
+                        imgsPath = Directory.GetParent(cockatriceFileName).ToString();
+                    }
+                    if (File.Exists(Path.Combine(imgsPath, $"{setCode}.xml")))
+                    {
+                        // prefer the XML file in images path, since it's the one with the bundled images in the Lore Seeker export
+                        cockatriceFileName = Path.Combine(imgsPath, $"{setCode}.xml");
+                    }
+                }
+                else
+                {
+                    // called with set code
+                    basePath = Directory.GetCurrentDirectory();
+                    var setCode = args[0];
+                    imgsPath = Path.Combine(basePath, $"{setCode}-files");
+                    cockatriceFileName = Path.Combine(imgsPath, $"{setCode}.xml");
+                    if (!File.Exists(cockatriceFileName))
+                    {
+                        // Custom Standard exporter
+                        cockatriceFileName = Path.Combine(basePath, $"{setCode}.xml");
+                    }
+                }
 
                 var fullXml = File.ReadAllText(cockatriceFileName);
 
