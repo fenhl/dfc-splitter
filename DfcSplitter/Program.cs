@@ -28,7 +28,7 @@ namespace DfcSplitter
     [Serializable]
     public class Set
     {
-        [XmlAttribute("picURL")]
+        [XmlAttribute("splitterPath")]
         public string PicUrl { get; set; }
 
         public override string ToString()
