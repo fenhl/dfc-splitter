@@ -5,6 +5,7 @@ This tool splits double-faced cards exported from [Magic Set Editor](https://mag
 1. Download `DfcSplitter.exe` from <https://github.com/fenhl/dfc-splitter/releases/latest>.
 2. In MSE, open the File menu and select Export → HTML.
 3. Choose the exporter “Cockatrice / Custom Standard 1.04”. (If you can't see the exporters' subtitles, you can check the version by looking at the first export option.)
+    * If you don't have the exporter, you can download it from <https://tinyurl.com/szb78x6>.
 4. The recommended options are:
     * “Custom” as the Cockatrice Set Type.
     * JPG images.
