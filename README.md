@@ -10,10 +10,11 @@ This tool splits double-faced cards exported from [Magic Set Editor](https://mag
     * JPG images.
     * Disable “Tokens In Separate XML” and “Append Set Code To Tokens”.
     * Export all rarities etc.
-4. Select where to save your export, and enter the set code as the file name.
+4. Select where to save your export, and enter the set code as the file name. For the set code `SET`, this will create a file named `SET.xml` and a folder named `SET-files`.
 5. *(You can skip this step if the set doesn't have any double-faced cards.)* In File Explorer, right-click the exported XML file, and select the downloaded `DfcSplitter.exe` from the “Open with…” menu.
     * The first time you do this, you will first have to download `DfcSplitter.exe` from <https://github.com/fenhl/dfc-splitter/releases/latest>. Then in the “Open with…” menu, click through “Choose another app”, then “More apps”, then “Look for another app on this PC”, then navigate to your Downloads folder.
-6. If you want to send the file to others, do that now, and tell your players the following steps.
+6. If you want to send the files to others, do that now, and tell your players the following steps.
+    * If you're using Google Drive for this, you'll have to compress the files locally before uploading, since Google Drive's own compression system can rename files in ways that causes Cockatrice to not find them.
 7. In Cockatrice, open the Card Database menu and select Open custom image folder.
 8. Move the folder with the images into the custom image folder.
 9. In Cockatrice, open the Card Database menu and select Open custom sets folder.
