@@ -114,6 +114,20 @@ namespace DfcSplitter
 
                 Console.WriteLine($"Found {allCards.Length} cards");
 
+                bool foundError = false;
+                foreach (Card card in allCards.Where(card => !allCards.Any(dayCard => dayCard.Related == card.Name)))
+                {
+                    var nightCards = allCards.Where(nightCard => nightCard.Name == card.Related).Count();
+                    if (nightCards > 1)
+                    {
+                        Console.WriteLine($"error: {card}'s back face has the same name as another card");
+                        foundError = true;
+                    }
+                    if (foundError)
+                    {
+                        Environment.Exit(1);
+                    }
+                }
                 var imagePairs = allCards
                 .Where(card => !allCards.Any(dayCard => dayCard.Related == card.Name))
                 .Select(card => new
@@ -146,7 +160,7 @@ namespace DfcSplitter
                     if (!File.Exists(dayFileName))
                     {
                         Console.WriteLine($"error: {dayFileName} does not exist");
-                        return;
+                        Environment.Exit(1);
                     }
 
                     using (Bitmap sourceImage = Image.FromFile(dayFileName) as Bitmap)
